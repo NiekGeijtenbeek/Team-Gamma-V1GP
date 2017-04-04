@@ -5,13 +5,13 @@
 
 task main(){
 
-	float Kp = 3.6;																			//proportional gain
-	float Ki = 0.003168;																//integral gain
-	float Kd = 0;																				//derivative gain
-	int white_Value = 50;
-	int black_Value = 40;
+	float Kp = 2;																			//proportional gain
+	float Ki = 0.003;																//integral gain
+	float Kd = 400;																				//derivative gain
+	int white_Value = 60;
+	int black_Value = 32;
 	int offset = ((white_Value + black_Value)/2);			//average white en black values
-	int Tp = 30;																			//power (-100 t/m 100)
+	int Tp = 50;																			//power (-100 t/m 100)
 	float integral = 0;
 	float last_Error = 0;
 	float derivative = 0;
