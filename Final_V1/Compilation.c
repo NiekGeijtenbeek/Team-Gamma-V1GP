@@ -63,6 +63,10 @@ task main()
 
 			motor[motor_L] = 0;
 			motor[motor_R] = 80;
+			integral = 0;
+			derivative = 0;
+			error = 0;
+			last_Error = 0;
 
 			wait1Msec(400);
 		}

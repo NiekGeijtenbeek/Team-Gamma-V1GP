@@ -41,6 +41,7 @@ task main()
 
 	while(true)
 	{
+		playTone(440,5);			//play sound while driving
 
 		float light_Value = SensorValue(light_L);													//light reading
 		float error = light_Value - offset;																//calculate error
