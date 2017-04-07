@@ -62,16 +62,25 @@ task main()
 
 		//	wait1Msec(250);
 
+			// sla linksaf
 			motor[motor_L] = 0;
 			motor[motor_R] = 80;
 
 			wait1Msec(300);
 			waitUntil(SensorValue(light_L) < 38);
+
+			// sla rechtsaf
+			//motor[motor_L] = 80;
+			//motor[motor_R] = 0;
+
+			//wait1Msec(350);
+			//waitUntil(SensorValue(light_L) < 38);
 		}
 
 		while(SensorValue(sonar) < 25){
 
 			if(motor[motor_L] < 2 || motor[motor_R] < 2){
+				playTone(0,0);						//stop sound
 				motor[motor_L] = 0;
 				motor[motor_R] = 0;
 			}else{
