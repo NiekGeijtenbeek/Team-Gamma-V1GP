@@ -3,8 +3,13 @@
 #pragma config(Sensor, S4,     light_R,        sensorLightActive)
 #pragma config(Motor,  motorB,          motor_L,       tmotorNXT, PIDControl, encoder)
 #pragma config(Motor,  motorC,          motor_R,       tmotorNXT, PIDControl, encoder)
+#pragma platform(NXT)
 
-int interupt = 0;
+const int kMaxSizeOfMessage = 30;
+const int INBOX = 5;
+
+char direction;
+
 
 task drive() {
 	float Kp = 2;																			//proportional gain
@@ -62,30 +67,90 @@ void take_crossroad(char direction) {
 		}
 }
 
-void grid_move(int x, int y) {
-	for (int c = 0; c != x; c++) {
-	startTask(drive);
-	waitUntil(SensorValue(light_L) < 40 || SensorValue(light_R) < 40);
-	stopTask(drive);
-	take_crossroad('r');
+//void grid_move(int x, int y) {
+//	for (int c = 0; c != x; c++) {
+//	startTask(drive);
+//	waitUntil(SensorValue(light_L) < 40 || SensorValue(light_R) < 40);
+//	stopTask(drive);
+//	take_crossroad('r');
+//	}
+//	startTask(drive);
+//	waitUntil(SensorValue(light_L) < 40 || SensorValue(light_R) < 40);
+//	take_crossroad('l');
+//
+//	startTask(drive);
+//}
+
+char bluetooth(){
+	TFileIOResult nBTCmdRdErrorStatus;
+	int nSizeOfMessage;
+	ubyte nRcvBuffer[kMaxSizeOfMessage];
+
+	nSizeOfMessage = cCmdMessageGetSize(INBOX);
+
+	if (nSizeOfMessage > kMaxSizeOfMessage)
+		nSizeOfMessage = kMaxSizeOfMessage;
+	if (nSizeOfMessage > 0){
+		nBTCmdRdErrorStatus = cCmdMessageRead(nRcvBuffer, nSizeOfMessage, INBOX);
+		nRcvBuffer[nSizeOfMessage] = '\0';
+		string s = "";
+		stringFromChars(s, (char *) nRcvBuffer);
+		//displayCenteredBigTextLine(4, s);
+
+		if(s == "LEFT"){ //0
+			direction = 'l';
+		}
+		if(s == "RIGHT"){ //1
+			direction = 'r';
+		}
+		if(s == "DOWN"){ //2
+
+		}
+		if(s == "UP"){ //3
+			direction = 'u';
+		}
+		if(s == "FIRE"){ //4
+			direction = 's';
+		}
+		if(s == "A"){ //5
+
+		}
+		if(s == "B"){ //6
+
+		}
+		if(s == "C"){ //7
+
+		}
+
 	}
-	startTask(drive);
-	waitUntil(SensorValue(light_L) < 40 || SensorValue(light_R) < 40);
-	take_crossroad('l');
-
-	startTask(drive);
+	return direction;
 }
 
-task main()
-{
-	while(true || interupt == 0) {
-	startTask(drive);
-	int crosscode = check_crossroad();
-	if (crosscode == 1) {
-		stopTask(drive);
-		wait1Msec(100);
-		take_crossroad('l');
-		crosscode = 0;
-}
-}
+task main(){
+	while(true) {
+
+		while(SensorValue(sonar) < 30){
+			stopTask(drive);
+			if(motor[motor_L] < 2 || motor[motor_R] < 2){
+				motor[motor_L] = 0;
+				motor[motor_R] = 0;
+			}else{
+				for(int i = 30; i > 0; i--){
+				 	motor[motor_L] = i;
+					motor[motor_R] = i;
+					wait1Msec(10);
+				}
+			}
+		}
+		startTask(drive);
+		int crosscode = check_crossroad();
+		char direction = bluetooth();
+		if (crosscode == 1) {
+			stopTask(drive);
+			wait1Msec(100);
+			take_crossroad(direction);
+			crosscode = 0;
+			direction = 'x';
+		}
+	}
 }
