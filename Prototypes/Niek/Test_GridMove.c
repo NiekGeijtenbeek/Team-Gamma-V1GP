@@ -31,7 +31,7 @@ task drive() {
 		motor[motor_R] = powerR;																					//motor R command
 		motor[motor_L] = powerL;																					//motor L command
 		last_Error = error;
-//		playTone(2000, 3);
+		//		playTone(2000, 3);
 	}
 }
 
@@ -46,46 +46,37 @@ int check_crossroad() {
 
 
 void take_crossroad(char direction) {
-		if (direction == 'l') {
+	if (direction == 'l') {
 		motor[motor_L] = 0;
 		motor[motor_R] = 40;
 		wait1Msec(500);
 		waitUntil(SensorValue(light_L) < 40);
-		}
+	}
 
-		else if (direction == 'r') {
+	else if (direction == 'r') {
 		motor[motor_L] = 40;
 		motor[motor_R] = 0;
 		wait1Msec(250);
 		waitUntil(SensorValue(light_R) < 40);
 		waitUntil(SensorValue(light_L) < 40);
-		}
-}
-
-void grid_move(int x, int y) {
-	for (int c = 0; c != x; c++) {
-	startTask(drive);
-	waitUntil(SensorValue(light_L) < 40 || SensorValue(light_R) < 40);
-	stopTask(drive);
-	take_crossroad('r');
 	}
-	startTask(drive);
-	waitUntil(SensorValue(light_L) < 40 || SensorValue(light_R) < 40);
-	take_crossroad('l');
-
-	startTask(drive);
 }
+
+task grid_move(int x, int y) {
+	;
+}
+
 
 task main()
 {
 	while(true || interupt == 0) {
-	startTask(drive);
-	int crosscode = check_crossroad();
-	if (crosscode == 1) {
-		stopTask(drive);
-		wait1Msec(100);
-		take_crossroad('l');
-		crosscode = 0;
-}
-}
+		startTask(drive);
+		int crosscode = check_crossroad();
+		if (crosscode == 1) {
+			stopTask(drive);
+			wait1Msec(100);
+			take_crossroad('l');
+			crosscode = 0;
+		}
+	}
 }
